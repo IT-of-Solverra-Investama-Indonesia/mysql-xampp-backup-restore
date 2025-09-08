@@ -28,8 +28,24 @@ if not os.path.exists(data_path):
     exit(1)
 
 try:
-    os.rename(data_path, renamed_path)
-    print(f"✅ Folder 'data' berhasil di-rename menjadi 'data_{today}'")
+    # Jika target rename sudah ada, tambahkan counter sampai mendapat nama unik
+    def unique_path(path):
+        if not os.path.exists(path):
+            return path
+        base = path
+        counter = 1
+        while True:
+            candidate = f"{base}_{counter}"
+            if not os.path.exists(candidate):
+                return candidate
+            counter += 1
+
+    final_renamed_path = unique_path(renamed_path)
+    os.rename(data_path, final_renamed_path)
+    # update renamed_path agar langkah berikutnya memakai nama yang benar
+    renamed_path = final_renamed_path
+    # tampilkan nama folder yang dipakai (bisa berbeda jika counter dipakai)
+    print(f"✅ Folder 'data' berhasil di-rename menjadi '{os.path.basename(renamed_path)}'")
 except Exception as e:
     print(f"❌ Gagal rename folder: {e}")
     exit(1)
